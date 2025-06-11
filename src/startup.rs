@@ -1,4 +1,3 @@
-
 use actix_web::dev::Server;
 use actix_web::{web, App, HttpServer};
 use std::net::TcpListener;
@@ -13,7 +12,7 @@ pub fn run(listener: TcpListener) -> Result<Server, std::io::Error> {
             .route("/subscriptions", web::post().to(subscribe))
     })
     .listen(listener)?
-        .run();
+    .run();
     // no await
     Ok(server)
 }

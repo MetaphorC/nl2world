@@ -1,14 +1,12 @@
-
+use sqlx::{Connection, PgConnection};
 use std::net::TcpListener;
-use sqlx::{PgConnection, Connection};
 
 use zero2prod::configuration::get_configuration;
 use zero2prod::startup::*;
 
 fn spawn_app() -> String {
-    let listener = TcpListener::bind("127.0.0.1:0")
-        .expect("Failed to bind randome port");
-    
+    let listener = TcpListener::bind("127.0.0.1:0").expect("Failed to bind randome port");
+
     // retrieving the port assigned by the os
     let port = listener.local_addr().unwrap().port();
     let server = run(listener).expect("Failed to bind address");
@@ -20,7 +18,6 @@ fn spawn_app() -> String {
 
 #[tokio::test]
 async fn health_check_works() {
-
     // arrange
     let address = spawn_app();
     let client = reqwest::Client::new();
@@ -39,7 +36,6 @@ async fn health_check_works() {
 
 #[tokio::test]
 async fn subscribe_returns_a_200_for_valid_form_data() {
-
     // arrange
     let app_address = spawn_app();
     let configuration = get_configuration().expect("Failed to read configuration");
@@ -79,7 +75,7 @@ async fn subscribe_returns_a_400_when_data_is_missing() {
     let test_cases = vec![
         ("name=le%20guin", "missing the email"),
         ("email=ursula_le_guin%40gmail.com", "missing the name"),
-        ("", "missing both name and email")
+        ("", "missing both name and email"),
     ];
 
     for (invalid_body, error_message) in test_cases {
