@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+
 set -x
 set -eo pipefail
 
@@ -10,7 +10,7 @@ fi
 if ! [ -x "$(command -v sqlx)" ]; then
     echo >&2 "Error: sqlx is not installed."
     echo >&2 "Use:"
-    echo >&2 "      cargo install --version=0.5.7 sqlx-cli -- no-default-features --features postgres"
+    echo >&2 " cargo install --version=0.5.7 sqlx-cli --no-default-features --features postgres"
     echo >&2 "to install it."
     exit 1
 fi
@@ -20,6 +20,8 @@ DB_PASSWORD="${POSTGRES_PASSWORD:=password}"
 DB_NAME="${POSTGRES_DB:=newsletter}"
 DB_PORT="${POSTGRES_PORT:=5432}"
 
+
+# Allow to skip Docker if a dockerized Postgres database is already running
 if [[ -z "${SKIP_DOCKER}" ]]
 then
     docker run \
@@ -37,7 +39,7 @@ until psql -h "localhost" -U "${DB_USER}" -p "${DB_PORT}" -d "postgres" -c '\q';
     sleep 1
 done
 
->&2 echo "Postgres is up and running on port ${DB_PORT} - running migration now!"
+>&2 echo "Postgres is up and running on port ${DB_PORT} - running migrations now!"
 
 export DATABASE_URL=postgres://${DB_USER}:${DB_PASSWORD}@localhost:${DB_PORT}/${DB_NAME}
 sqlx database create
